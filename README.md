@@ -1,16 +1,41 @@
-# React + Vite
+# Super Admin (SaaS Panel) 👑
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Painel centralizado para gestão da plataforma (Franqueadora) e dos donos de estabelecimento.
 
-Currently, two official plugins are available:
+## 🛠️ Tecnologias
+- **Frontend**: React (Vite)
+- **Backend/Database**: Supabase (PostgreSQL + Realtime)
+- **Estilização**: CSS Modules (Vanilla)
+- **Icons**: Lucide React
+- **Charts**: Recharts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Como Rodar
+```bash
+# Instalar dependências
+npm install
 
-## React Compiler
+# Rodar localmente
+npm run dev
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Build de produção
+npm run build
+```
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 👑 God Mode SaaS
+Painel com **Dupla Visão** (Role-Based Access Control):
+
+### 🅰️ Visão Super Admin (Você/Dono da Plataforma)
+1.  **Dashboard Global**: Faturamento somado de TODAS as franquias.
+2.  **Gestão de Tenants**: Cadastre e suspenda estabelecimentos com 1 clique.
+3.  **Configurações Globais**: Defina a taxa da plataforma (1.99% ou R$ 2,00) e chave Pix recebedora.
+4.  **Auditoria Financeira**: Aprove solicitações de saque dos donos de bar.
+
+### 🅱️ Visão Owner (Dono do Bar)
+1.  **Meu Faturamento**: Gráficos exclusivos do seu estabelecimento.
+2.  **Gestão de Equipe**:
+    *   **Crie Garçons**: Cadastre nomes e gere os PINs de acesso.
+3.  **Financeiro**:
+    *   Veja saldo disponível.
+    *   **Solicitar Saque**: Envie pedido de repasse para a plataforma.
