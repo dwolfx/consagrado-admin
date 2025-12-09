@@ -35,7 +35,8 @@ Painel com **Dupla Visão** (Role-Based Access Control):
 ### 🅱️ Visão Owner (Dono do Bar)
 1.  **Meu Faturamento**: Gráficos exclusivos do seu estabelecimento.
 2.  **Gestão de Equipe**:
-    *   **Crie Garçons**: Cadastre nomes e gere os PINs de acesso.
+    *   **Crie Garçons**: Cadastre nomes, gerencie PINs e dados completos (CPF, Pix, Endereço).
+    *   **Monitoramento**: Veja quem está online e logs de turno.
 3.  **Financeiro**:
     *   Veja saldo disponível.
     *   **Solicitar Saque**: Envie pedido de repasse para a plataforma.
