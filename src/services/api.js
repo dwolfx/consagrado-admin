@@ -67,6 +67,15 @@ export const api = {
             .select('*');
         return data || [];
     },
+    updateEstablishment: async (id, updates) => {
+        const { data, error } = await supabase
+            .from('establishments')
+            .update(updates)
+            .eq('id', id)
+            .select();
+        if (error) console.error('Error updating establishment', error);
+        return data;
+    },
 
     // Users (Auth)
     login: async (email, password) => {
