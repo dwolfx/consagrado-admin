@@ -2,7 +2,14 @@ import { useState, useEffect } from 'react';
 import { payoutRequests } from '../data/mockData';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { DollarSign, CheckCircle, XCircle, ArrowUpRight, CreditCard, Save, Info, AlertCircle } from 'lucide-react';
+import {
+    DollarSign, CheckCircle, XCircle, ArrowUpRight,
+    CreditCard, Save, Info, AlertCircle, TrendingUp
+} from 'lucide-react';
+import {
+    AreaChart, Area, XAxis, YAxis, CartesianGrid,
+    Tooltip, ResponsiveContainer
+} from 'recharts';
 
 const Finance = () => {
     const { user } = useAuth();
@@ -12,6 +19,49 @@ const Finance = () => {
     // Banking State
     const [banking, setBanking] = useState({ pixKey: '00.000.000/0001-00', titular: 'Seu Bar LTDA' });
     const [loading, setLoading] = useState(false);
+
+    // Chart State
+    const [timeRange, setTimeRange] = useState('1W');
+
+    // Mock Data Generator for Chart
+    const getChartData = (range) => {
+        const base = 1000;
+        const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+        switch (range) {
+            case '1D':
+                return [
+                    { name: '18h', value: random(0, 200) }, { name: '19h', value: random(200, 500) },
+                    { name: '20h', value: random(500, 1200) }, { name: '21h', value: random(1000, 2500) },
+                    { name: '22h', value: random(1500, 3000) }, { name: '23h', value: random(1000, 2000) },
+                    { name: '00h', value: random(500, 1000) }, { name: '01h', value: random(0, 500) }
+                ];
+            case '1M':
+                return Array.from({ length: 15 }, (_, i) => ({
+                    name: `Dia ${i * 2 + 1}`,
+                    value: base + random(-500, 2000) + (i * 100)
+                }));
+            case '1YA':
+                return [
+                    { name: 'Jan', value: 45000 }, { name: 'Fev', value: 52000 },
+                    { name: 'Mar', value: 48000 }, { name: 'Abr', value: 61000 },
+                    { name: 'Mai', value: 55000 }, { name: 'Jun', value: 67000 },
+                    { name: 'Jul', value: 72000 }, { name: 'Ago', value: 85000 },
+                    { name: 'Set', value: 91000 }, { name: 'Out', value: 88000 },
+                    { name: 'Nov', value: 95000 }, { name: 'Dez', value: 120000 }
+                ];
+            case '1W': // Default fallback
+            default:
+                return [
+                    { name: 'Seg', value: 1200 }, { name: 'Ter', value: 1500 },
+                    { name: 'Qua', value: 3200 }, { name: 'Qui', value: 4500 },
+                    { name: 'Sex', value: 8900 }, { name: 'Sáb', value: 12500 },
+                    { name: 'Dom', value: 6700 }
+                ];
+        }
+    };
+
+    const chartData = getChartData(timeRange);
 
     useEffect(() => {
         if (user?.name && !isSuper) {
@@ -24,7 +74,6 @@ const Finance = () => {
         if (user?.establishmentId) {
             await api.updateEstablishment(user.establishmentId, { pix_key: banking.pixKey });
         }
-        // Artificial delay for UX
         setTimeout(() => {
             setLoading(false);
             alert('Dados bancários atualizados com sucesso!');
@@ -43,12 +92,82 @@ const Finance = () => {
                     <div>
                         <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Financeiro</h1>
                         <p style={{ color: 'var(--text-secondary)' }}>
-                            Configure seus dados de recebimento e acompanhe repasses.
+                            Performance, saldo e configurações de recebimento.
                         </p>
                     </div>
                     <button className="btn">
                         <ArrowUpRight size={18} /> Solicitar Antecipação
                     </button>
+                </div>
+
+                {/* Performance Chart */}
+                <div className="card" style={{ marginBottom: '2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                        <div>
+                            <h2 style={{ fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.25rem' }}>
+                                <TrendingUp size={20} color="var(--success)" /> Performance de Vendas
+                            </h2>
+                            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                                Faturamento Bruto no período
+                            </p>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
+                            {['1D', '1W', '1M', '1YA'].map(r => (
+                                <button
+                                    key={r}
+                                    onClick={() => setTimeRange(r)}
+                                    style={{
+                                        border: 'none', background: timeRange === r ? 'white' : 'transparent',
+                                        boxShadow: timeRange === r ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                        padding: '4px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem',
+                                        fontWeight: timeRange === r ? '600' : '400', color: timeRange === r ? 'var(--primary)' : '#64748b',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    {r}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div style={{ height: '300px', width: '100%' }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <defs>
+                                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                <XAxis
+                                    dataKey="name"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#64748b', fontSize: 12 }}
+                                    dy={10}
+                                />
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#64748b', fontSize: 12 }}
+                                    tickFormatter={(value) => `R$${value / 1000}k`}
+                                />
+                                <Tooltip
+                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    formatter={(value) => [`R$ ${value.toLocaleString('pt-BR')}`, 'Faturamento']}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="value"
+                                    stroke="var(--primary)"
+                                    strokeWidth={3}
+                                    fillOpacity={1}
+                                    fill="url(#colorValue)"
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
 
                 {/* Banking Config Card */}
@@ -153,8 +272,13 @@ const Finance = () => {
     }
 
     // --- SUPER ADMIN VIEW ---
+    // (Kept separate return for cleaner code structure, though above if statement handles it)
     return (
         <div>
+            {/* Fallback to Super Admin view logic if needed, but the if(!isSuper) return covers the user request. 
+               This part handles the 'else' implicitly or can be structured to handle isSuper explicitly. 
+               Wait, the previous return is inside if(!isSuper). So this is the 'else' block. OK. 
+           */}
             <div className="header">
                 <div>
                     <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Financeiro Global</h1>
