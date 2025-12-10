@@ -22,9 +22,15 @@ export const globalStats = {
 };
 
 export const staffMembers = [
-    { id: 1, name: "João Pedro", pin: "1234", active: true },
-    { id: 2, name: "Maria Silva", pin: "5678", active: true },
-    { id: 3, name: "Carlos Souza", pin: "0000", active: false },
+    { id: 1, name: "João Pedro", role: "Garçom Líder", shift: "18:00 - 02:00", phone: "(11) 99999-1111", active: true, status: "online", avatar: null },
+    { id: 2, name: "Maria Silva", role: "Atendente", shift: "18:00 - 23:00", phone: "(11) 99999-2222", active: true, status: "online", avatar: null },
+    { id: 3, name: "Carlos Souza", role: "Barman", shift: "19:00 - 03:00", phone: "(11) 99999-3333", active: true, status: "offline", lastSeen: "Ontem 03:00" },
+];
+
+export const freelancers = [
+    { id: 101, name: "Jorge da Silva", role: "Garçom", rating: 4.9, jobs: 12, phone: "5511999998888", skills: ["Bandeja", "Vinhos"] },
+    { id: 102, name: "Ana Clara", role: "Bartender", rating: 5.0, jobs: 8, phone: "5511999997777", skills: ["Mixologia", "Agilidade"] },
+    { id: 103, name: "Roberto Junior", role: "Cumim", rating: 4.5, jobs: 3, phone: "5511999996666", skills: ["Limpeza", "Organização"] },
 ];
 
 export const payoutRequests = [
