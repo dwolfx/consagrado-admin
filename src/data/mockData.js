@@ -38,3 +38,11 @@ export const payoutRequests = [
     { id: 102, establishment: "Boteco da Esquina", amount: 2500.00, date: "08/12/2025", status: "Paid", pix: "boteco@email.com" },
     { id: 103, establishment: "Balada Night", amount: 15000.00, date: "07/12/2025", status: "Paid", pix: "99.999.999/0001-99" },
 ];
+
+export const inventoryItems = [
+    { id: 1, name: 'Cerveja Heineken 600ml', stock: 12, min: 24, unit: 'gf', supplier: 'Ambev', phone: '5511999999999', price: 7.50, consumptionRate: 4 },
+    { id: 2, name: 'Vodka Absolut', stock: 2, min: 3, unit: 'gf', supplier: 'Adega SP', phone: '5511988888888', price: 85.00, consumptionRate: 0.2 },
+    { id: 3, name: 'Picanha', stock: 5.5, min: 5, unit: 'kg', supplier: 'Açougue Zé', phone: '5511977777777', price: 69.90, consumptionRate: 0.5 },
+    { id: 4, name: 'Gelo 5kg', stock: 10, min: 5, unit: 'pct', supplier: 'Disk Gelo', phone: '5511966666666', price: 12.00, consumptionRate: 2 },
+    { id: 5, name: 'Limão', stock: 0.5, min: 2, unit: 'kg', supplier: 'Hortifruti', phone: '5511955555555', price: 4.50, consumptionRate: 1.5 },
+];

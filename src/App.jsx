@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
-import { LayoutDashboard, Store, Settings as SettingsIcon, LogOut, Users, DollarSign } from 'lucide-react';
+import { LayoutDashboard, Store, Settings as SettingsIcon, LogOut, Users, DollarSign, Package } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import Establishments from './pages/Establishments';
 import Staff from './pages/Staff';
 import Finance from './pages/Finance';
+import Inventory from './pages/Inventory';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -52,6 +53,11 @@ const Layout = ({ children }) => {
           <NavLink to="/finance" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <DollarSign size={20} />
             <span>Financeiro</span>
+          </NavLink>
+
+          <NavLink to="/inventory" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Package size={20} />
+            <span>Estoque</span>
           </NavLink>
 
           {isSuper && (
@@ -104,6 +110,12 @@ function App() {
           <Route path="/finance" element={
             <RequireAuth>
               <Layout><Finance /></Layout>
+            </RequireAuth>
+          } />
+
+          <Route path="/inventory" element={
+            <RequireAuth>
+              <Layout><Inventory /></Layout>
             </RequireAuth>
           } />
 
