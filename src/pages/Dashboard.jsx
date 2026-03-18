@@ -1,4 +1,4 @@
-import { globalStats, revenueHistory, establishments } from '../data/mockData';
+import { globalStats, revenueHistory } from '../data/mockData';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DollarSign, Store, Users, TrendingUp, AlertCircle, Utensils, Clock, CheckCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';

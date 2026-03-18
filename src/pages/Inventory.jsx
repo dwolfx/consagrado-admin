@@ -3,7 +3,7 @@ import { Package, AlertTriangle, CheckCircle, ShoppingCart, MessageCircle, Trend
 import { inventoryItems } from '../data/mockData';
 
 const Inventory = () => {
-    const [items, setItems] = useState(inventoryItems);
+    const [items] = useState(inventoryItems);
 
     const getStatus = (item) => {
         if (item.stock <= item.min) return { label: 'CRÍTICO', color: 'var(--danger)', bg: '#fef2f2', icon: AlertTriangle };
@@ -99,8 +99,7 @@ const Inventory = () => {
                                                 padding: '0.5rem 1rem', borderRadius: '6px', border: 'none', cursor: 'pointer',
                                                 backgroundColor: item.stock <= item.min * 1.2 ? '#25D366' : 'transparent',
                                                 color: item.stock <= item.min * 1.2 ? 'white' : 'var(--text-secondary)',
-                                                fontWeight: '600',
-                                                border: item.stock <= item.min * 1.2 ? 'none' : '1px solid var(--border)'
+                                                fontWeight: '600'
                                             }}
                                         >
                                             {item.stock <= item.min * 1.2 ? (

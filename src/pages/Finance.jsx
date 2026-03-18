@@ -65,7 +65,9 @@ const Finance = () => {
 
     useEffect(() => {
         if (user?.name && !isSuper) {
-            setBanking(prev => ({ ...prev, titular: user.name }));
+            setTimeout(() => {
+                setBanking(prev => ({ ...prev, titular: user.name }));
+            }, 0);
         }
     }, [user, isSuper]);
 
