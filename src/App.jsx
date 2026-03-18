@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Store, Settings as SettingsIcon, LogOut, Users, DollarSign, Package } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import Establishments from './pages/Establishments';
@@ -8,11 +8,20 @@ import Inventory from './pages/Inventory';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Landing from './pages/Landing';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import logoUrl from './assets/logo.png';
 
 const RequireAuth = ({ children }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" />;
+  return children;
+};
+
+const RequireEstablishment = ({ children }) => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" />;
+  if (!user.hasEstablishment && user.role !== 'super') return <Navigate to="/establishments" />;
   return children;
 };
 
@@ -24,26 +33,24 @@ const Layout = ({ children }) => {
     <div className="admin-layout">
       <aside className="sidebar">
         <div style={{ marginBottom: '3rem' }}>
-          <h2 style={{ color: 'white' }}>
-            Admin<span style={{ color: 'var(--primary)' }}>Panel</span>
-          </h2>
+          <img src={logoUrl} alt="Consagrado Logo" style={{ height: '40px', marginBottom: '0.5rem', filter: 'drop-shadow(0 0 8px rgba(99, 102, 241, 0.4))' }} />
           <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{user?.email}</div>
         </div>
 
         <nav style={{ flex: 1 }}>
-          <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
+          <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </NavLink>
 
-          {isSuper && (
+          {(isSuper || user?.role === 'owner') && (
             <NavLink to="/establishments" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Store size={20} />
               <span>Estabelecimentos</span>
             </NavLink>
           )}
 
-          {!isSuper && (
+          {(isSuper || user?.role === 'owner') && (
             <NavLink to="/staff" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Users size={20} />
               <span>Equipe</span>
@@ -60,7 +67,7 @@ const Layout = ({ children }) => {
             <span>Estoque</span>
           </NavLink>
 
-          {isSuper && (
+          {(isSuper || user?.role === 'owner') && (
             <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <SettingsIcon size={20} />
               <span>Configurações</span>
@@ -89,10 +96,12 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          <Route path="/" element={
-            <RequireAuth>
+          <Route path="/" element={<Landing />} />
+          
+          <Route path="/dashboard" element={
+            <RequireEstablishment>
               <Layout><Dashboard /></Layout>
-            </RequireAuth>
+            </RequireEstablishment>
           } />
 
           <Route path="/establishments" element={
@@ -102,27 +111,27 @@ function App() {
           } />
 
           <Route path="/staff" element={
-            <RequireAuth>
+            <RequireEstablishment>
               <Layout><Staff /></Layout>
-            </RequireAuth>
+            </RequireEstablishment>
           } />
 
           <Route path="/finance" element={
-            <RequireAuth>
+            <RequireEstablishment>
               <Layout><Finance /></Layout>
-            </RequireAuth>
+            </RequireEstablishment>
           } />
 
           <Route path="/inventory" element={
-            <RequireAuth>
+            <RequireEstablishment>
               <Layout><Inventory /></Layout>
-            </RequireAuth>
+            </RequireEstablishment>
           } />
 
           <Route path="/settings" element={
-            <RequireAuth>
+            <RequireEstablishment>
               <Layout><Settings /></Layout>
-            </RequireAuth>
+            </RequireEstablishment>
           } />
 
           {/* Catch all - Redirect to Home */}

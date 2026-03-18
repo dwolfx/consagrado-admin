@@ -8,16 +8,19 @@ const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Mock Logic: If email contains 'admin', treat as Super Admin, else Owner
-        if (email.includes('admin')) {
-            login('super');
-        } else {
-            login('owner');
+        setLoading(true);
+        try {
+            await login(email, password);
+            navigate('/dashboard');
+        } catch (error) {
+            alert('Erro ao fazer login: ' + error.message);
+        } finally {
+            setLoading(false);
         }
-        navigate('/');
     };
 
     return (
@@ -53,16 +56,12 @@ const Login = () => {
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border)' }}
                         />
                     </div>
-                    <button type="submit" className="btn" style={{ justifyContent: 'center', marginTop: '0.5rem' }}>Entrar</button>
+                    <button type="submit" className="btn" disabled={loading} style={{ justifyContent: 'center', marginTop: '0.5rem' }}>
+                        {loading ? 'Entrando...' : 'Entrar'}
+                    </button>
 
                     <div style={{ textAlign: 'center', fontSize: '0.875rem', marginTop: '1rem' }}>
                         Não tem conta? <Link to="/register" style={{ color: 'var(--primary)', textDecoration: 'none' }}>Cadastre-se como Dono</Link>
-                    </div>
-
-                    <div style={{ marginTop: '1rem', padding: '1rem', background: '#f8fafc', borderRadius: '8px', fontSize: '0.75rem', color: '#64748b' }}>
-                        <strong>Dica para Teste:</strong><br />
-                        Use "admin@..." para **Super Admin**.<br />
-                        Use qualquer outro para **Owner**.
                     </div>
                 </form>
             </div>

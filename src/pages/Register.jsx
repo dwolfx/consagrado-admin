@@ -7,11 +7,19 @@ const Register = () => {
     const { register } = useAuth();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        register(formData);
-        navigate('/');
+        setLoading(true);
+        try {
+            await register(formData);
+            navigate('/dashboard');
+        } catch (error) {
+            alert('Erro ao criar conta: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -56,7 +64,9 @@ const Register = () => {
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border)' }}
                         />
                     </div>
-                    <button type="submit" className="btn" style={{ justifyContent: 'center', marginTop: '0.5rem', backgroundColor: '#0f172a' }}>Criar Conta</button>
+                    <button type="submit" className="btn" disabled={loading} style={{ justifyContent: 'center', marginTop: '0.5rem', backgroundColor: '#0f172a' }}>
+                        {loading ? 'Criando...' : 'Criar Conta'}
+                    </button>
 
                     <div style={{ textAlign: 'center', fontSize: '0.875rem', marginTop: '1rem' }}>
                         Já tem conta? <Link to="/login" style={{ color: 'var(--primary)', textDecoration: 'none' }}>Fazer Login</Link>

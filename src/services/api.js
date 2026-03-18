@@ -60,12 +60,98 @@ export const api = {
         return data;
     },
 
-    // Establishments
-    getEstablishments: async () => {
-        let { data } = await supabase
-            .from('establishments')
-            .select('*');
+    // Suppliers (Shared with B2B)
+    getSuppliers: async (establishmentId) => {
+        let query = supabase.from('suppliers').select('*');
+        if (establishmentId) query = query.eq('establishment_id', establishmentId);
+        let { data, error } = await query.order('name');
+        if (error) console.error(error);
         return data || [];
+    },
+
+    // Inventory
+    getInventory: async (establishmentId) => {
+        let query = supabase.from('inventory').select('*, suppliers(*)');
+        if (establishmentId) query = query.eq('establishment_id', establishmentId);
+        let { data, error } = await query;
+        if (error) console.error(error);
+        return data || [];
+    },
+    createInventoryItem: async (itemData) => {
+        const { data, error } = await supabase
+            .from('inventory')
+            .insert([itemData])
+            .select();
+        if (error) throw error;
+        return data[0];
+    },
+    updateInventoryItem: async (id, updates) => {
+        const { data, error } = await supabase
+            .from('inventory')
+            .update(updates)
+            .eq('id', id)
+            .select();
+        if (error) throw error;
+        return data;
+    },
+    deleteInventoryItem: async (id) => {
+        const { error } = await supabase
+            .from('inventory')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
+        return true;
+    },
+
+    // Establishments
+    getEstablishments: async (ownerId) => {
+        let query = supabase.from('establishments').select('*');
+        if (ownerId) query = query.eq('owner_id', ownerId);
+        let { data, error } = await query;
+        if (error) console.error(error);
+        return data || [];
+    },
+    getEstablishmentById: async (id) => {
+        const { data, error } = await supabase
+            .from('establishments')
+            .select('*')
+            .eq('id', id)
+            .single();
+        if (error) throw error;
+        return { data };
+    },
+    uploadLogo: async (file, establishmentId) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${establishmentId}-${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { data, error } = await supabase.storage
+            .from('logos')
+            .upload(filePath, file);
+
+        if (error) throw error;
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('logos')
+            .getPublicUrl(filePath);
+
+        return publicUrl;
+    },
+    createEstablishment: async (estabData, ownerId) => {
+        const { data, error } = await supabase
+            .from('establishments')
+            .insert([{ 
+                name: estabData.name, 
+                type: estabData.type,
+                logo_url: estabData.logo_url || null,
+                theme_color: estabData.theme_color || '#6366f1',
+                theme_secondary_color: estabData.theme_secondary_color || '#4338ca',
+                theme_background_color: estabData.theme_background_color || '#0f172a',
+                owner_id: ownerId 
+            }])
+            .select();
+        if (error) throw error;
+        return data[0];
     },
     updateEstablishment: async (id, updates) => {
         const { data, error } = await supabase
@@ -73,20 +159,38 @@ export const api = {
             .update(updates)
             .eq('id', id)
             .select();
-        if (error) console.error('Error updating establishment', error);
+        if (error) throw error;
         return data;
     },
+    deleteEstablishment: async (id) => {
+        const { error } = await supabase
+            .from('establishments')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
+        return true;
+    },
 
-    // Users (Auth)
-    login: async (email, password) => {
-        // For this demo, we are doing simple table lookup. 
-        // In production, use supabase.auth.signInWithPassword()
-        let { data } = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', email)
-            .eq('password', password)
-            .single();
+    // Users (Auth - GoTrue)
+    signUpBase: async (email, password, metaData) => {
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { data: metaData }
+        });
+        if (error) throw error;
         return data;
+    },
+    loginBase: async (email, password) => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+        if (error) throw error;
+        return data;
+    },
+    logoutBase: async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
     }
 };
