@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Store, Settings as SettingsIcon, LogOut, Users, DollarSign, Package } from 'lucide-react';
+import { LayoutDashboard, Store, Settings as SettingsIcon, LogOut, Users, DollarSign, Package, Menu, X } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import Establishments from './pages/Establishments';
 import Staff from './pages/Staff';
@@ -26,15 +27,53 @@ const RequireEstablishment = ({ children }) => {
 };
 
 const Layout = ({ children }) => {
-  const { logout, user } = useAuth();
+  const { logout, user, establishments, currentEstablishment, selectEstablishment } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isSuper = user?.role === 'super';
 
   return (
     <div className="admin-layout">
-      <aside className="sidebar">
-        <div style={{ marginBottom: '3rem' }}>
-          <img src={logoUrl} alt="Consagrado Logo" style={{ height: '40px', marginBottom: '0.5rem', filter: 'drop-shadow(0 0 8px rgba(99, 102, 241, 0.4))' }} />
-          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{user?.email}</div>
+      {/* Mobile Header Hamburger */}
+      <div className="mobile-header">
+        <img src={logoUrl} alt="Consagrado Logo" style={{ height: '28px' }} />
+        <button className="mobile-menu-btn" onClick={() => setIsSidebarOpen(true)}>
+          <Menu size={24} />
+        </button>
+      </div>
+
+      {/* Sidebar Overlay (Mobile) */}
+      <div className={`sidebar-overlay ${isSidebarOpen ? 'open' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+
+      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+        <div style={{ marginBottom: '2.5rem', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <img src={logoUrl} alt="Consagrado Logo" style={{ height: '36px', filter: 'drop-shadow(0 0 8px rgba(99, 102, 241, 0.4))' }} />
+            {/* Close Button on Mobile Sidebar */}
+            <button className="mobile-menu-btn hide-desktop-btn" onClick={() => setIsSidebarOpen(false)}>
+              <X size={24} />
+            </button>
+          </div>
+          
+          {/* Establishment Switcher */}
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '800', color: '#64748b', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Seletor de Unidade</label>
+            <select 
+              value={currentEstablishment?.id || 'all'} 
+              onChange={(e) => selectEstablishment(e.target.value === 'all' ? null : e.target.value)}
+              style={{ 
+                width: '100%', padding: '0.6rem 0.8rem', background: 'rgba(255,255,255,0.03)', 
+                border: '1px solid var(--border)', borderRadius: '12px', color: 'white', 
+                fontSize: '0.85rem', outline: 'none', cursor: 'pointer', fontWeight: '600'
+              }}
+            >
+              <option value="all" style={{ background: '#0f172a' }}>🌐 Visão Global (Rede)</option>
+              {establishments.map(est => (
+                <option key={est.id} value={est.id} style={{ background: '#0f172a' }}>
+                  🏢 {est.name} {(est.city || est.state) ? `(${est.city}${est.city && est.state ? ', ' : ''}${est.state})` : ''}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <nav style={{ flex: 1 }}>

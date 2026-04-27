@@ -143,6 +143,9 @@ export const api = {
             .insert([{ 
                 name: estabData.name, 
                 type: estabData.type,
+                address: estabData.address || null,
+                city: estabData.city || null,
+                state: estabData.state || null,
                 logo_url: estabData.logo_url || null,
                 theme_color: estabData.theme_color || '#6366f1',
                 theme_secondary_color: estabData.theme_secondary_color || '#4338ca',
